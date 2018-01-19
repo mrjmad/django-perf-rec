@@ -30,6 +30,11 @@ sql_deleteable_tokens = (
 
 
 def sql_recursively_simplify(node):
+
+    # Erase volatile part of PG cursor name
+    if node.tokens[0].value.startswith('"_django_curs_'):
+        node.tokens[0].value = '"_django_curs_#"'
+
     # Erase which fields are being updated in an UPDATE
     if node.tokens[0].value == 'UPDATE':
         i_set = [i for (i, t) in enumerate(node.tokens) if t.value == 'SET'][0]
